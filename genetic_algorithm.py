@@ -35,7 +35,7 @@ def fitness(individuo):
 	return aptidao
 
 
-def roleta(populacao):
+def roleta(populacao, fitness):
 	"""
 	Reamostra a populacao atravez do metodo da roleta.
 
@@ -73,7 +73,7 @@ def roleta(populacao):
 	return populacao_reamostrada
 
 
-def torneio(populacao):
+def torneio(populacao, fitness):
 	"""
 	Reamostra a populacao atravez do metodo do torneio.
 
@@ -117,7 +117,7 @@ def crossover(progenitor1, progenitor2, taxa_de_crossover=0.5):
 	return prole1, prole2
 
 
-def mutar(individuo, taxa_de_mutacao=0.04):
+def mutar(individuo, taxa_de_mutacao=0.2):
 	"""
 	Performa a mutacao do individuo.
 
@@ -133,12 +133,12 @@ def mutar(individuo, taxa_de_mutacao=0.04):
 	return individuo
 
 
-def algoritmo_genetico(num_individuos, num_atributos, num_geracoes, metodo="torneio", taxa_de_crossover=0.5, taxa_de_mutacao=0.04, debug=False):
+def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, metodo="torneio", taxa_de_crossover=0.5, taxa_de_mutacao=0.2, debug=False):
 	"""
 	# TODO
 	"""
-	if num_individuos % 2:
-		raise ValueError("Numero de individuos deve ser par")
+	#if num_individuos % 2:
+	#	raise ValueError("Numero de individuos deve ser par")
 
 	# Cria populacao inicial
 	populacao = criar_individuos(num_individuos, num_atributos)
@@ -147,9 +147,9 @@ def algoritmo_genetico(num_individuos, num_atributos, num_geracoes, metodo="torn
 		
 		# Reamostragem
 		if metodo == "roleta":
-			populacao = roleta(populacao)
+			populacao = roleta(populacao, fitness)
 		elif metodo == "torneio":
-			populacao = torneio(populacao)
+			populacao = torneio(populacao, fitness)
 		else:
 			raise ValueError("Este metodo nao existe")
 
