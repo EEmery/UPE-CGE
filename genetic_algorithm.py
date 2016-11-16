@@ -19,22 +19,6 @@ def criar_individuos(num_individuos, num_atributos):
 	return populacao
 
 
-def fitness(individuo):
-	"""
-	Calcula a aptidao do individuo.
-
-	@individuo: uma lista de valores "0" ou "1" (atributos).
-
-	@return: um numero correspondente a aptidao.
-	"""
-	num_atributos = len(individuo)
-	aptidao = 0
-	for i in range(num_atributos):
-		if individuo[i] == 1:
-			aptidao += 1
-	return aptidao
-
-
 def roleta(populacao, fitness):
 	"""
 	Reamostra a populacao atravez do metodo da roleta.
@@ -108,7 +92,7 @@ def crossover(progenitor1, progenitor2, taxa_de_crossover=0.5):
 	prole2 = list()
 
 	for i in range(num_atributos):
-		if i < num_atributos*taxa_de_crossover:						# Enquanto o ponto de troca nao for excedido
+		if i < num_atributos*taxa_de_crossover:							# Enquanto o ponto de troca nao for excedido
 			prole1.append(progenitor1[i])								# pega o atributo do progenitor 1
 			prole2.append(progenitor2[i])								# pega o atributo do progenitor 2
 		else:															# caso ja tenha excedido
@@ -127,19 +111,19 @@ def mutar(individuo, taxa_de_mutacao=0.2):
 	@return: lista de atributos do individuo com alguns atributos trocados.
 	"""
 	num_atributos = len(individuo)
+	individuo_mutado = list()
 	for i in range(num_atributos):
 		if random() <= taxa_de_mutacao:
-			individuo[i] = 0 if individuo[i] else 1
-	return individuo
+			individuo_mutado.append(0 if individuo[i] else 1)
+		else:
+			individuo_mutado.append(individuo[i])
+	return individuo_mutado
 
 
 def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, metodo="torneio", taxa_de_crossover=0.5, taxa_de_mutacao=0.2, debug=False):
 	"""
 	# TODO
 	"""
-	#if num_individuos % 2:
-	#	raise ValueError("Numero de individuos deve ser par")
-
 	# Cria populacao inicial
 	populacao = criar_individuos(num_individuos, num_atributos)
 
@@ -179,52 +163,4 @@ def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, me
 		aptidao = fitness(individuo)											# Calcula a aptidao do individuo
 		if solucao[1] < aptidao:
 			solucao = individuo, aptidao										# Substitui a solucao pela melhor
-	return solucao																# Retorna a solucao mais adaptada
-
-
-# ========================================================
-# SCRIPT DE TESTES
-
-# Criar Individuos
-def teste_1():
-	populacao = criar_individuos(6, 10)
-	for individuo in populacao:
-		print individuos
-
-# fitness
-def teste_2():
-	ind1 = [1, 1, 1, 1, 1, 1, 1, 1]			# Fitness = 8
-	ind2 = [0, 0, 0, 0, 0, 0, 0, 0]			# Fitness = 0
-	ind3 = [1, 1, 1, 1, 0, 0, 0, 0]			# Fitness = 4
-	ind4 = [0, 0, 0, 0, 1, 1, 1, 1]			# Fitness = 4
-	print fitness(ind1), fitness(ind2), fitness(ind3), fitness(ind4)
-
-# Crossover
-def teste_3():
-	ind1 = [1, 1, 1, 1, 1, 1, 1, 1]
-	ind2 = [0, 0, 0, 0, 0, 0, 0, 0]
-	ind3 = [1, 1, 1, 1, 0, 0, 0, 0]
-	ind4 = [0, 0, 0, 0, 1, 1, 1, 1]
-	prole1, prole2 = crossover(ind1, ind2)
-	prole3, prole4 = crossover(ind3, ind4)
-	print prole1
-	print prole2
-	print prole3
-	print prole4
-
-# Mutacao
-def teste_4():
-	ind1 = [1, 1, 1, 1, 1, 1, 1, 1]
-	ind2 = [0, 0, 0, 0, 0, 0, 0, 0]
-	print mutar(ind1)
-	print mutar(ind2)
-
-# Reamostragens
-def teste_5():
-	ind1 = [1, 1, 1, 1, 1, 1, 1, 1]
-	ind2 = [0, 0, 0, 0, 0, 0, 0, 0]
-	ind3 = [1, 1, 1, 1, 1, 0, 0, 0]
-	ind4 = [0, 0, 0, 0, 0, 1, 1, 1]
-	populacao = [ind1, ind2, ind3, ind4]
-	print torneio(populacao)
-	print roleta(populacao)
+	return solucao																# Retorna a solucao mais adaptado
