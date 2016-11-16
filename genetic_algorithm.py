@@ -122,7 +122,18 @@ def mutar(individuo, taxa_de_mutacao=0.2):
 
 def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, metodo="torneio", taxa_de_crossover=0.5, taxa_de_mutacao=0.2, debug=False):
 	"""
-	# TODO
+	Utiliza um algoritmo genetico para encontrar uma solucao optima ou sub-optima.
+
+	@num_individuos: Numero de individuos na populacao.
+	@num_atributos: Numero de atributos de cada individuo.
+	@num_geracoes: Numero de geracoes.
+	@fitness: Funcao fitness.
+	@metodo: Metodo de reamostragem. Possui dois valores "roleta" ou "torneio".
+	@taxa_de_crossover: Ponto de troca no crossover (0.0 - 1.0)
+	@taxa_de_mutacao: Probabilidade de um atributo ter seu valor invertido (0.0 - 1.0)
+	@debug: Se possuir o valor "True", imprime mensagens de debug no terminal.
+
+	@return: Uma tuple onde [0] e' uma lista dos atributos do melhor individuo da ultima geracao e [1] e' a sua aptidao.
 	"""
 	# Cria populacao inicial
 	populacao = criar_individuos(num_individuos, num_atributos)
