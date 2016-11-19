@@ -11,9 +11,14 @@ def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDeseja
 	elif economiaDesejada_entry.get():
 		economia_desejada = string_para_float(economiaDesejada_entry.get())
 	else:
-		raise ValueError("Informe o quanto deseja reduzir")
+		print "Informe o quanto deseja reduzir"
+		return
 
-	ug_desejada = unidades_gestoras[ug_listbox.curselection()[0]]
+	try:
+		ug_desejada = unidades_gestoras[ug_listbox.curselection()[0]]
+	except IndexError:
+		print "Informe a Unidade Gestora a ser analisada"
+		return
 
 	gastos_da_ug = ler_tabela_ifl(ug_desejada)
 	plano_de_acoes = ler_tabela_acoes()
