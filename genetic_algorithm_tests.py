@@ -93,3 +93,5 @@ def teste_rapido():
 	print str(solucao_torneio[0]) + " Aptidao: " + str(solucao_torneio[1]) + " (metodo do torneio)"
 	print str(solucao_roleta[0]) + " Aptidao: " + str(solucao_roleta[1]) + " (metodo da roleta)"
 	print "[1, 1, 1, 1, 1, 1, 1, 1] Aptidao: 8 (solucao ideal)\n"
+
+teste_rapido()

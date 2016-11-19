@@ -83,7 +83,7 @@ def crossover(progenitor1, progenitor2, taxa_de_crossover=0.5):
 
 	@progenitor1: lista de atributos do progenitor 1.
 	@progenitor2: lista de atributos do progenitor 2.
-	@taxa_de_crossover: Informa o quantos atributos devem ser pegos do progenitor 1 (default = 0.5).
+	@taxa_de_crossover: Informa o quantos atributos devem ser pegos do progenitor 1.
 
 	@return: lista de atributos da prole 1 e prole 2 (tuple).
 	"""
