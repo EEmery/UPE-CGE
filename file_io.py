@@ -23,21 +23,21 @@ def string_para_float(string):
 		if not("," in i):
 			resposta += i 												# Concatena a resposta
 	
-	return float(resposta + dezenas + "." + centavos)				# Concatena a resposta total e converte para float
+	return float(resposta + dezenas + "." + centavos)					# Concatena a resposta total e converte para float
 
 
-def ler_tabela_ifl(ug_desejada, nome_arquivo="IFL.csv"):
+def ler_tabela_ifl(ug_desejada, nome_arquivo="ifl.csv"):
 	"""
-	A partir da tabela do Indice de bla bla bla, gera uma lista com o gasto anual de cada setor da unidade gestora selecionada.
+	A partir da tabela do Indicador Financeiro de Liquidacao, gera uma lista com o gasto anual de cada setor da unidade gestora selecionada.
 
 	@ug_desejada: Unidade Gestora que se deseja obter os gastos.
 	@arquivo: arquivo ".csv" com os dados das unidades gestoras.
 
 	@return: retorna lista com pares setor-gasto no formato:
-	         [[setor, acumulado_dezembro]
-	          [setor, acumulado_dezembro]
+	         [[setor, gasto anual]
+	          [setor, gasto anual]
 	           ...
-	          [setor, acumulado_dezembro]]
+	          [setor, gasto anual]]
 
 	"""
 	arquivo = open(nome_arquivo, "r")
