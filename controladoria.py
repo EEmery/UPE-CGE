@@ -2,10 +2,11 @@ from file_io import *
 from genetic_algorithm import *
 
 
-def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, unidades_gestoras, peso_de_punicao=0.3):
+def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry, unidades_gestoras, peso_de_punicao=0.3):
 	"""
 	TODO
 	"""
+	# Decide entre calcular a partir do ano atual e anterior ou da economia desejada
 	if anoAnterior_entry.get() != "" or anoAtual_entry.get() != "":
 		economia_desejada = string_para_float(anoAtual_entry.get()) - string_para_float(anoAnterior_entry.get())
 	elif economiaDesejada_entry.get():
@@ -14,21 +15,38 @@ def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDeseja
 		print "Informe o quanto deseja reduzir"
 		return
 
+	# Coleta a Unidade Gestora de interesse. Aponta um erro caso nao seja informada.
 	try:
 		ug_desejada = unidades_gestoras[ug_listbox.curselection()[0]]
 	except IndexError:
-		print "Informe a Unidade Gestora a ser analisada"
+		print "Informe a Unidade Gestora de interesse"
 		return
 
-	gastos_da_ug = ler_tabela_ifl(ug_desejada)
-	plano_de_acoes = ler_tabela_acoes()
+	# Coleta o arquivo do Indice Financeiro de Liquidacao. Aponta um erro caso nao seja informado.
+	if ifl_entry.get() != "":
+		gastos_da_ug = ler_tabela_ifl(ug_desejada, ifl_entry.get())
+	else:
+		print "Informe o arquivo do Indice Financeiro de Liquidacao"
+		return
+
+	# Coleta o arquivo do Plano de Acoes. Aponta um erro caso nao seja informado.
+	if plano_entry.get() != "":
+		plano_de_acoes = ler_tabela_acoes(plano_entry.get())
+	else:
+		print "Informe o arquivo do Plano de Acoes"
+		return
 
 	max_setor = max(zip(*gastos_da_ug)[1])
 
 
 	def gasto_anual_no_setor(setor_desejado, gastos_da_ug=gastos_da_ug):
 		"""
-		TODO
+		Dado um setor, retorna o gasto anual da unidade gestora em analise.
+
+		@setor_desejado: O setor desejado.
+		@gastos_da_ug: Uma lista com pares "setor, gasto anual" proviniente da funcao "ler_tabela_ifl".
+
+		@return: O gasto anual do setor da Unidade Gestora em analise.
 		"""
 		for setor, gasto_anual in gastos_da_ug:
 			if setor_desejado == setor:
@@ -37,7 +55,16 @@ def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDeseja
 
 	def fitness(individuo, max_setor=max_setor, plano_de_acoes=plano_de_acoes, gastos_da_ug=gastos_da_ug, peso_de_punicao=peso_de_punicao, economia_desejada=economia_desejada):
 		"""
-		TODO
+		Retorna a aptidao do individuo.
+
+		@individuo: uma lista com valores "0" ou "1".
+		@max_setor: o valor do setor de maior gasto.
+		@plano_de_acoes: Uma lista com "acao, setor, impacto" proviniente da funcao "ler_tabela_acoes".
+		@gastos_da_ug: Uma lista com pares "setor, gasto anual" proviniente da funcao "ler_tabela_ifl".
+		@peso_de_punicao: O quanto a punicao ira impactar na aptidao final.
+		@economia_desejada: O valor de impacto a ser atingido.
+
+		@return: A aptidao do individuo (float).
 		"""
 		economia_atual = 0
 		punicao = 0
@@ -69,8 +96,9 @@ root = tk.Tk()
 root.title("Sugestao de Plano de Acoes")
 root.geometry("800x600")
 
-x_margin = 20
-x_margin_entry = 350
+x_margin1 = 20
+x_margin = 330
+x_margin_entry = 650
 y_margin = -10
 y_padding = 25
 
@@ -107,17 +135,22 @@ economiaDesejada_entry = tk.Entry(root, bg="#546E7A", bd=0, fg="#FFFFFF")
 economiaDesejada_entry.place(x=x_margin_entry, y=y_margin+y_padding*5)
 
 # Lista de Unidades Gestoras
-unidades_gestoras = ["ADAGRO", "APAC", "APEVISA", "ARPE", "ATI", "BOMBEIROS", "CAMIL", "CEHAB", "CG-SDS", "CISAM", "CONDEPE/FIDEM", "CONSELHO C&A", "CPRH", "CTM", "DAG-SDS", "DASIS", "DEF CIVIL", "DEFN", "DER-PE", "DETRAN", "DOE", "DOIS IRMAOS", "DRR-I RF SUL", "DRR II REGIAO", "EMPETUR", "EPC", "EPTI", "FACEPE", "FCAP - UPE", "FCM - UPE", "FEAS", "FEDCA - PE", "FEDIPE", "FENSG - UPE", "FERH", "FES-PE", "FESPE - UPE", "FFPG - UPE", "FFPNM", "FFPP - UPE", "FOP - UPE", "FRF", "FUNAPE", "FUNASE", "FUNDARPE", "GAB GOV", "GABINETE CIVIL", "GAB VICE", "GAPE", "HAM", "HBL", "HEMOPE", "HGV", "HOF", "HR", "HRA", "HUOC", "ICB - UPE", "IPA", "IPEM PE", "IRH-PE", "ITERPE", "JUCEPE", "LACEN", "NAPA DRR I RF N", "PE-ESEF/UPE", "PERPART", "PGE-PE", "PMPE", "POLCIV-SDS", "POLI", "PROCAPE", "PROCON", "PRODETUR", "PRORURAL", "SAD", "SAFI", "SARA", "SASSEPE", "SCGE", "SDEC", "SDSCJ", "SEC-CPM", "SECHAB", "SECID", "SECTEC", "SECULT", "SEDUC", "SEFAZ-PE", "SEI", "SEJUDH", "SEMAS", "SEMPETQ", "SEMUL", "SEPLAN", "SERES", "SETRA", "SETUREL", "SRHE"]
+listbox_label = tk.Label(root, text="Informe a Unidade Gestora de Interesse:")
+listbox_label.place(x=x_margin1, y=y_margin+y_padding*1)
+if ifl_entry.get() != "":
+	unidades_gestoras = ler_ugs(ifl_entry.get())
+else:
+	unidades_gestoras = []
 scrollbar = tk.Scrollbar(root, orient="vertical")
 ug_listbox = tk.Listbox(root, yscrollcommand=scrollbar.set, selectmode="single", height=12)
 for i, ug in enumerate(unidades_gestoras):
 	ug_listbox.insert(i+1, ug)
 scrollbar.config(command=ug_listbox.yview)
-scrollbar.place(x=x_margin, y=y_margin+y_padding*6)
-ug_listbox.place(x=x_margin, y=y_margin+y_padding*6)
+scrollbar.place(x=x_margin1+130, y=y_margin+y_padding*2)
+ug_listbox.place(x=x_margin1+6, y=y_margin+y_padding*2)
 
 # Botao de otimizar
-otimizar_button = tk.Button(root, text="Otimizar Acoes", command=lambda:rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, unidades_gestoras), height=2, width=20, bd=0, bg="#546E7A", fg="#FFFFFF")
-otimizar_button.place(x=x_margin, y=y_margin+y_padding*16)
+otimizar_button = tk.Button(root, text="Otimizar Acoes", command=lambda:rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry, unidades_gestoras), height=2, width=20, bd=0, bg="#546E7A", fg="#FFFFFF")
+otimizar_button.place(x=x_margin_entry-23, y=y_margin+y_padding*8)
 
 root.mainloop()
