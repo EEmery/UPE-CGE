@@ -79,6 +79,35 @@ def ler_tabela_ifl(ug_desejada, nome_arquivo="ifl.csv"):
 	return gastos_da_ug
 
 
+def gastos_maximos_das_ugs(nome_arquivo="ifl.csv"):
+	"""
+	TODO
+	"""
+	arquivo = open(nome_arquivo, "r")
+	gastos_dos_setores = {}
+
+	# Busca pela unidade gestora desejada
+	for line in arquivo:
+		line_list = line.split(',"')									# Transforma a linha numa lista
+		split_index = index_de_corte(line_list[0])						# Pega a posicao do ultimo hifen
+
+		try:
+			unidade_gestora = line_list[0][:split_index]				# Pega o nome da unidade gestora da linha
+			setor = line_list[0][split_index+1:]						# Pega o setor da linha
+			valor = string_para_float(line_list[-1][:-2])				# Pega o valor gasto no setor
+
+			if not(setor in gastos_dos_setores):						# Se o setor ainda nao tiver no dicionario
+				gastos_dos_setores[setor] = valor 						# adiciona o par setor-gasto a ele
+
+			elif gastos_dos_setores[setor] < valor:						# Caso o setor esteja, checa se o valor atual e' maior do que o existente
+				gastos_dos_setores[setor] = valor 						# e o subistitui caso seja
+		
+		except ValueError:												# Caso nao seja uma linha da tabela sobre uma unidade gestora
+			pass
+
+	return gastos_dos_setores
+
+
 def ler_tabela_acoes(nome_arquivo="plano_de_acoes.csv"):
 	"""
 	A partir da tabela do Plano de Acoes, gera uma lista com as acoes, os setores e os impactos do plano.
