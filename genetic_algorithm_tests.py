@@ -86,9 +86,9 @@ def teste_completo():
 
 def teste_rapido():
 	print "Iniciando teste pelo metodo do torneio...\n"
-	solucao_torneio = algoritmo_genetico(num_individuos=30, num_atributos=8, num_geracoes=2000,  fitness=fitness1, metodo="torneio", taxa_de_crossover=0.5, taxa_de_mutacao=0.2, debug=True)
+	solucao_torneio = algoritmo_genetico(num_individuos=30, num_atributos=8, num_geracoes=2200,  fitness=fitness1, metodo="torneio", taxa_de_crossover=0.7, taxa_de_mutacao=0.2, debug=True)
 	print "\nIniciando teste pelo metodo da roleta...\n"
-	solucao_roleta = algoritmo_genetico(num_individuos=30, num_atributos=8, num_geracoes=2000,  fitness=fitness1, metodo="roleta", taxa_de_crossover=0.5, taxa_de_mutacao=0.2, debug=True)
+	solucao_roleta = algoritmo_genetico(num_individuos=30, num_atributos=8, num_geracoes=2200,  fitness=fitness1, metodo="roleta", taxa_de_crossover=0.7, taxa_de_mutacao=0.2, debug=True)
 	print "\nMelhores solucoes encontradas:\n"
 	print str(solucao_torneio[0]) + " Aptidao: " + str(solucao_torneio[1]) + " (metodo do torneio)"
 	print str(solucao_roleta[0]) + " Aptidao: " + str(solucao_roleta[1]) + " (metodo da roleta)"

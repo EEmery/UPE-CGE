@@ -21,7 +21,7 @@ def inicializar():
 	unidades_gestoras = ler_ugs("ifl.csv")
 
 
-def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry):
+def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry, scale):
 	"""
 	TODO
 	"""
@@ -103,19 +103,31 @@ def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDeseja
 
 	# Roda o Algoritmo Genetico
 	num_acoes = len(plano_de_acoes)
-	solucao = algoritmo_genetico(num_individuos=40, num_atributos=num_acoes, num_geracoes=2000,  fitness=fitness, metodo="roleta")
+	solucao_total = algoritmo_genetico(num_individuos=40, num_atributos=num_acoes, num_geracoes=2000,  fitness=fitness, metodo="roleta", tipo_de_retorno = "populacao")
 
+	# Seleciona as "n" melhores solucoes distintas onde "n" e' o valor no "scale"
+	num_solucoes = int(float(scale.get()))
+	solucao = list()
+	for individuo, aptidao in solucao_total:
+		if not(individuo in solucao):									# Adiciona o individuo a solucao caso ele seja distinto
+			solucao.append(individuo)
+		if len(solucao) >= num_solucoes:								# Sai do loop caso tenha atingido o numero maximo de solucoes
+			break
+
+	# Gera a string de saida
 	acoes_da_solucao = ""
-	for i in range(num_acoes):
-		if solucao[0][i] == 1:
-			acoes_da_solucao += plano_de_acoes[i][0] + " - " + plano_de_acoes[i][1] + " - Economia: R$" + str(plano_de_acoes[i][2]) + "\n"
-	print acoes_da_solucao
+	for j, individuo in enumerate(solucao):
+		acoes_da_solucao += 'Plano ' + str(j+1) +"\n"
+		for i in range(num_acoes):
+			if individuo[i] == 1:
+				acoes_da_solucao += "  " + plano_de_acoes[i][0] + " - " + plano_de_acoes[i][1] + " - Economia: R$" + str(plano_de_acoes[i][2]) + "\n"
+		acoes_da_solucao += "\n"
 	return acoes_da_solucao
 
 
-def callback(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry):
+def callback(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry, scale):
 	global output
-	output.set(rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry))
+	output.set(rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry, scale))
 	return
 
 
@@ -137,6 +149,7 @@ ou = tk.Label(root, text="ou").grid(row=6, column=4)
 space="                                                        "
 linha_vazia_1 = tk.Label(root, text=space).grid(row=3, column=3)
 linha_vazia_2 = tk.Label(root, text=space).grid(row=8, column=3)
+linha_vazia_2 = tk.Label(root, text=space).grid(row=9, column=3)
 
 # Arquivo do Indice Financeiro de Liquidacao
 ifl_label = tk.Label(root, text=space+"Arquivo do Indicador Financeiro de Liquidacao:")
@@ -181,9 +194,15 @@ scrollbar.config(command=ug_listbox.yview)
 scrollbar.grid(row=1, column=1, rowspan=7, sticky='nsw')
 ug_listbox.grid(row=1, column=0, rowspan=7, sticky='nse')
 
+# Scale de numero de solucoes
+scale_label = tk.Label(root, text="Numero maximo de planos:")
+scale_label.grid(row=8, column=3, sticky='e')
+scale = tk.Scale(root, from_=1, to=4, resolution=1.0, orient='horizontal')
+scale.grid(row=8, column=4, sticky='ew')
+
 # Botao de otimizar
-otimizar_button = tk.Button(root, text="Otimizar Acoes", command=lambda:callback(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry), height=2, bd=0, bg="#546E7A", fg="#FFFFFF")
-otimizar_button.grid(row=9, column=4, sticky='ew')
+otimizar_button = tk.Button(root, text="Otimizar Acoes", command=lambda:callback(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDesejada_entry, ifl_entry, plano_entry, scale), height=2, bd=0, bg="#546E7A", fg="#FFFFFF")
+otimizar_button.grid(row=10, column=4, sticky='ew')
 
 # Saida do programa
 output = tk.StringVar()

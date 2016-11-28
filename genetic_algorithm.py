@@ -77,7 +77,7 @@ def torneio(populacao, fitness):
 	return populacao_reamostrada										# Retorna os individuos reamostrados
 
 
-def crossover(progenitor1, progenitor2, taxa_de_crossover=0.5):
+def crossover(progenitor1, progenitor2):
 	"""
 	Performa o cruzamento (crossover) entre dois individuos.
 
@@ -90,9 +90,10 @@ def crossover(progenitor1, progenitor2, taxa_de_crossover=0.5):
 	num_atributos = len(progenitor1)									# Numero total de atributos
 	prole1 = list()
 	prole2 = list()
+	crossover_point = int(random()*num_atributos)
 
 	for i in range(num_atributos):
-		if i < num_atributos*taxa_de_crossover:							# Enquanto o ponto de troca nao for excedido
+		if i < crossover_point:											# Enquanto o ponto de troca nao for excedido
 			prole1.append(progenitor1[i])								# pega o atributo do progenitor 1
 			prole2.append(progenitor2[i])								# pega o atributo do progenitor 2
 		else:															# caso ja tenha excedido
@@ -120,7 +121,7 @@ def mutar(individuo, taxa_de_mutacao=0.2):
 	return individuo_mutado
 
 
-def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, metodo="torneio", taxa_de_crossover=0.5, taxa_de_mutacao=0.2, debug=False):
+def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, metodo="torneio", taxa_de_crossover=0.7, taxa_de_mutacao=0.2, tipo_de_retorno='individuo', debug=False):
 	"""
 	Utiliza um algoritmo genetico para encontrar uma solucao optima ou sub-optima.
 
@@ -129,8 +130,9 @@ def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, me
 	@num_geracoes: Numero de geracoes.
 	@fitness: Funcao fitness.
 	@metodo: Metodo de reamostragem. Possui dois valores "roleta" ou "torneio".
-	@taxa_de_crossover: Ponto de troca no crossover (0.0 - 1.0)
-	@taxa_de_mutacao: Probabilidade de um atributo ter seu valor invertido (0.0 - 1.0)
+	@taxa_de_crossover: Ponto de troca no crossover (0.0 - 1.0).
+	@taxa_de_mutacao: Probabilidade de um atributo ter seu valor invertido (0.0 - 1.0).
+	@tipo_de_retorno: 'individuo' retorna o melhor individuo da ultima geracao, 'geracao' retorna toda a ultima geracao.
 	@debug: Se possuir o valor "True", imprime mensagens de debug no terminal.
 
 	@return: Uma tuple onde [0] e' uma lista dos atributos do melhor individuo da ultima geracao e [1] e' a sua aptidao.
@@ -139,6 +141,13 @@ def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, me
 	populacao = criar_individuos(num_individuos, num_atributos)
 
 	for geracao in range(num_geracoes):
+
+		# Informacoes para debug
+		if debug and geracao%100 == 0:
+			aptidao_total = 0
+			for individuo in populacao:
+				aptidao_total += fitness(individuo)
+			print "Gearacao: " + str(geracao) + " aptidao media: " + str(float(aptidao_total)/num_individuos)
 		
 		# Reamostragem
 		if metodo == "roleta":
@@ -151,7 +160,11 @@ def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, me
 		# Crossover
 		for i in range(num_individuos):
 			progenitor1, progenitor2 = populacao.pop(0), populacao.pop(0)		# Remove da populacao os dois primeiros individuos
-			prole1, prole2 = crossover(progenitor1, progenitor2)				# Faz o cruzamento entre os dois individuos recebendo duas proles
+
+			if random() < taxa_de_crossover:
+				prole1, prole2 = crossover(progenitor1, progenitor2)			# Faz o cruzamento entre os dois individuos recebendo duas proles
+			else:
+				prole1, prole2 = progenitor1, progenitor2						# Faz dos progenitores, as proles (nao ha' cruzamento)
 
 			# Mutacao
 			prole1 = mutar(prole1)
@@ -161,17 +174,12 @@ def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, me
 			populacao.append(prole1)
 			populacao.append(prole2)
 
-		# Informacoes para debug
-		if debug and geracao%100 == 0:
-			aptidao_total = 0
-			for individuo in populacao:
-				aptidao_total += fitness(individuo)
-			print "Gearacao: " + str(geracao+1) + " aptidao media: " + str(float(aptidao_total)/num_individuos)
+	solucao = []
+	for individuo in populacao:												# Itera sob todos os individuos na populacao
+		aptidao = fitness(individuo)										# Calcula a aptidao do individuo
+		solucao.append((individuo, aptidao))								# Adiciona o par individuo-aptidao a solucao
+	
+	if tipo_de_retorno == 'individuo':										# Retorna o individuo mais apto
+		return solucao[zip(*solucao)[1].index(max(zip(*solucao)[1]))]
 
-	# Itera sob todos os individuos da ultima geracao para encontrar o mais apto
-	solucao = populacao[0], fitness(populacao[0])								# Inicialmente marca o primeiro individuo como a solucao
-	for individuo in populacao:													# Itera sob todos os individuos na populacao
-		aptidao = fitness(individuo)											# Calcula a aptidao do individuo
-		if solucao[1] < aptidao:
-			solucao = individuo, aptidao										# Substitui a solucao pela melhor
-	return solucao																# Retorna a solucao mais adaptado
+	return sorted(solucao, key=lambda tup: -tup[1])							# Retorna toda a ultima geracao em ordem decrescente de aptidao
