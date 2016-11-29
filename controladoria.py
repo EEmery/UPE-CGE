@@ -16,7 +16,7 @@ def inicializar():
 	global max_setores
 	max_setores = gastos_maximos_das_ugs("ifl.csv")
 	global plano_de_acoes
-	plano_de_acoes = ler_tabela_acoes("plano_de_acoes.csv")
+	plano_de_acoes = ler_tabela_acoes("banco_de_acoes.csv")
 	global unidades_gestoras
 	unidades_gestoras = ler_ugs("ifl.csv")
 
@@ -57,7 +57,7 @@ def rodar_programa(ug_listbox, anoAtual_entry, anoAnterior_entry, economiaDeseja
 		return "Informe o arquivo do Indice Financeiro de Liquidacao"
 
 	# Coleta o arquivo do Plano de Acoes. Aponta um erro caso nao seja informado.
-	if plano_entry.get() != "" and plano_entry.get() != "plano_de_acoes.csv":
+	if plano_entry.get() != "" and plano_entry.get() != "banco_de_acoes.csv":
 		plano_de_acoes = ler_tabela_acoes(plano_entry.get())
 	elif plano_entry.get() == "":
 		return "Informe o arquivo do Plano de Acoes"
@@ -162,7 +162,7 @@ ifl_entry.grid(row=1, column=4)
 plano_label = tk.Label(root, text="Arquivo do Plano de Acoes:")
 plano_label.grid(row=2, column=3, sticky='e')
 plano_entry = tk.Entry(root, bg="#546E7A", bd=0, fg="#FFFFFF")
-plano_entry.insert(0, "plano_de_acoes.csv")
+plano_entry.insert(0, "banco_de_acoes.csv")
 plano_entry.grid(row=2, column=4)
 
 # Gasto do ano anterior

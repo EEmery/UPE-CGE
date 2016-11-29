@@ -108,7 +108,7 @@ def gastos_maximos_das_ugs(nome_arquivo="ifl.csv"):
 	return gastos_dos_setores
 
 
-def ler_tabela_acoes(nome_arquivo="plano_de_acoes.csv"):
+def ler_tabela_acoes(nome_arquivo="banco_de_acoes.csv"):
 	"""
 	A partir da tabela do Plano de Acoes, gera uma lista com as acoes, os setores e os impactos do plano.
 
