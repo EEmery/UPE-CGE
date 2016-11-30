@@ -24,6 +24,7 @@ def roleta(populacao, fitness):
 	Reamostra a populacao atravez do metodo da roleta.
 
 	@populacao: lista com todos os individuos.
+	@fitness: funcao fitness.
 
 	@return: uma lista no mesmo formato de "populacao" com individuos reamostrados.
 	"""
@@ -62,6 +63,7 @@ def torneio(populacao, fitness):
 	Reamostra a populacao atravez do metodo do torneio.
 
 	@populacao: lista com todos os individuos.
+	@fitness: Funcao fitness.
 
 	@return: uma lista no mesmo formato de "populacao" com individuos reamostrados.
 	"""
@@ -83,7 +85,6 @@ def crossover(progenitor1, progenitor2):
 
 	@progenitor1: lista de atributos do progenitor 1.
 	@progenitor2: lista de atributos do progenitor 2.
-	@taxa_de_crossover: Informa o quantos atributos devem ser pegos do progenitor 1.
 
 	@return: lista de atributos da prole 1 e prole 2 (tuple).
 	"""
@@ -135,7 +136,7 @@ def algoritmo_genetico(num_individuos, num_atributos, num_geracoes,  fitness, me
 	@tipo_de_retorno: 'individuo' retorna o melhor individuo da ultima geracao, 'geracao' retorna toda a ultima geracao.
 	@debug: Se possuir o valor "True", imprime mensagens de debug no terminal.
 
-	@return: Uma tuple onde [0] e' uma lista dos atributos do melhor individuo da ultima geracao e [1] e' a sua aptidao.
+	@return: Uma tuple onde [0] e' uma lista dos atributos do melhor individuo da ultima geracao e [1] e' a sua aptidao ou uma lista de tuples ordenada.
 	"""
 	# Cria populacao inicial
 	populacao = criar_individuos(num_individuos, num_atributos)
