@@ -1,4 +1,5 @@
 from genetic_algorithm import *
+import numpy
 
 def fitness1(individuo):
 	"""
